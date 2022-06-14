@@ -66,7 +66,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   }
 
   initialize() {
-    final user = controller.doctor;
+    final user = controller.doctor.value;
     nameController = TextEditingController(text: user.name);
     mobileNumberController = TextEditingController(text: user.phoneNumber);
     emailController = TextEditingController(text: user.email);
@@ -96,7 +96,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   void update() async {
     if (_formKey.currentState!.validate()) {
       CustomDialog.showLoading(msg: "Updating Profile...");
-      Doctor doctor = controller.doctor;
+      Doctor doctor = controller.doctor.value;
       doctor.name = nameController.text;
       doctor.email = emailController.text;
       doctor.phoneNumber = mobileNumberController.text;
@@ -120,7 +120,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        drawer: SideDrawer(),
+        drawer: SideDrawer(pageName: 'profile-edit'),
         appBar: AppBar(
           title: Text(
             "Edit Profile",

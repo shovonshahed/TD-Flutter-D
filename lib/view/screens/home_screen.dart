@@ -16,9 +16,9 @@ class HomeScreen extends StatelessWidget {
       },
       child: Scaffold(
         appBar: MyCustomAppBar(),
-        drawer: SideDrawer(),
+        drawer: SideDrawer(pageName: 'home-page'),
         body: SafeArea(
-          child: Text(controller.doctor.name),
+          child: Text(controller.doctor.value.name),
         ),
       ),
     );

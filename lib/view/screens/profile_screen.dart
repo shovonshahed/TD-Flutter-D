@@ -20,9 +20,9 @@ class ProfileScreen extends StatelessWidget {
   final DoctorController controller = Get.find();
   @override
   Widget build(BuildContext context) {
-    final Doctor doctor = controller.doctor;
+    final Doctor doctor = controller.doctor.value;
     return Scaffold(
-        drawer: SideDrawer(),
+        drawer: SideDrawer(pageName: 'profile-view'),
         appBar: AppBar(
           title: Text(
             "Profile",

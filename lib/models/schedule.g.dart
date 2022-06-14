@@ -7,14 +7,16 @@ part of 'schedule.dart';
 // **************************************************************************
 
 Schedule _$ScheduleFromJson(Map<String, dynamic> json) => Schedule()
-  ..scheduleId = json['scheduleId'] as num
+  ..scheduleId = json['scheduleId'] as num?
   ..dayOfWeek = json['dayOfWeek'] as num
   ..startTime = json['startTime'] as String
-  ..endTime = json['endTime'] as String;
+  ..endTime = json['endTime'] as String
+  ..patientLimit = json['patientLimit'] as num;
 
 Map<String, dynamic> _$ScheduleToJson(Schedule instance) => <String, dynamic>{
       'scheduleId': instance.scheduleId,
       'dayOfWeek': instance.dayOfWeek,
       'startTime': instance.startTime,
       'endTime': instance.endTime,
+      'patientLimit': instance.patientLimit,
     };

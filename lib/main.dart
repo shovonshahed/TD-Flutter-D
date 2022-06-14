@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:teledoc_doctor/view/screens/add_schedule_screen.dart';
+import 'package:teledoc_doctor/view/screens/schedules_list_screen.dart';
 import 'view/screens/home_screen.dart';
 import 'view/screens/login_screen.dart';
 import 'view/screens/profile_edit_screen.dart';
@@ -33,6 +35,8 @@ class MyApp extends StatelessWidget {
           HomeScreen.id: (context) => HomeScreen(),
           ProfileScreen.id: (context) => ProfileScreen(),
           ProfileEditScreen.id: (context) => ProfileEditScreen(),
+          SchedulesListScreen.id: (context) => SchedulesListScreen(),
+          AddScheduleScreen.id: (context) => AddScheduleScreen(),
         },
         // here
         navigatorObservers: [FlutterSmartDialog.observer],

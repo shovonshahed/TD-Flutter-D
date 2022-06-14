@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:teledoc_doctor/controllers/doctor_controller.dart';
 import '../../services/loading_service.dart';
 import '../screens/home_screen.dart';
 import '../screens/login_screen.dart';
+import '../screens/schedules_list_screen.dart';
 import '../screens/welcome_screen.dart';
 
 import '../../constants/constants.dart';
-import '../../controllers/doctor_controller.dart';
 import '../screens/profile_screen.dart';
 
 enum DeviceType { Phone, Tablet }
@@ -21,7 +22,9 @@ DeviceType getDeviceType() {
 class SideDrawer extends StatelessWidget {
   SideDrawer({
     Key? key,
+    required this.pageName,
   }) : super(key: key);
+  final String pageName;
   final DoctorController controller = Get.find();
   @override
   Widget build(BuildContext context) {
@@ -41,9 +44,11 @@ class SideDrawer extends StatelessWidget {
               color: Color(0xFF06122A),
             ),
             InkWell(
-              onTap: () {
-                Navigator.pushNamed(context, ProfileScreen.id);
-              },
+              onTap: pageName != 'profile-view'
+                  ? () {
+                      Navigator.pushNamed(context, ProfileScreen.id);
+                    }
+                  : null,
               child: Container(
                 height: 80.w,
                 // width: 500.w,
@@ -60,7 +65,7 @@ class SideDrawer extends StatelessWidget {
                           ? 122.w
                           : 220.w,
                       child: Text(
-                        controller.doctor.name,
+                        controller.doctor.value.name,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 2,
                         style: TextStyle(
@@ -83,7 +88,29 @@ class SideDrawer extends StatelessWidget {
                 "Home",
                 style: TextStyle(color: Colors.white),
               ),
-              onTap: () => Navigator.pushNamed(context, HomeScreen.id),
+              onTap: pageName != 'home-page'
+                  ? () => Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        HomeScreen.id,
+                        (route) => false,
+                      )
+                  : null,
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.access_time,
+                color: Colors.white,
+              ),
+              title: Text(
+                "Schedules",
+                style: TextStyle(color: Colors.white),
+              ),
+              onTap: pageName != 'schedules-list'
+                  ? () => Navigator.pushNamed(
+                        context,
+                        SchedulesListScreen.id,
+                      )
+                  : null,
             ),
             ListTile(
               leading: Icon(

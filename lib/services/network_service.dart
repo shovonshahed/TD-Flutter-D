@@ -7,11 +7,74 @@ import 'package:dio/dio.dart';
 import '../models/index.dart';
 
 class NetworkService {
-  static const url = "http://10.0.2.2:5073";
+  static const url = "https://teledoc.azurewebsites.net";
+  // static const url = "http://10.0.2.2:5073";
   // static const url = "10.0.2.2:7116";
 
+  static Future<Either<String, List<Schedule>>> getSchedules(
+      String email, String token) async {
+    Map<String, dynamic> parameters = {
+      "email": email,
+    };
+    try {
+      Dio dio = new Dio();
+      dio.options.headers['content-Type'] = 'application/json';
+      dio.options.headers["Authorization"] = "Bearer ${token}";
+      var response = await dio.get(url + '/api/doctors/schedule',
+          queryParameters: parameters);
+      print(response.data);
+      if (response.statusCode == 200) {
+        List<dynamic> schedulesMap = response.data;
+        List<Schedule> schedules = [];
+        schedules = (schedulesMap)
+            .map((e) => Schedule.fromJson(e as Map<String, dynamic>))
+            .toList();
+        return Right(schedules);
+      } else {
+        return const Left("Some error occurred.");
+      }
+    } catch (e) {
+      print(e);
+      return const Left("Some error occurred.");
+      // throw e;
+    }
+  }
+
+  static Future<Either<String, List<Schedule>>> addSchedule(
+      Schedule schedule, String token) async {
+    Map<String, dynamic> parameters = {
+      "dayOfWeek": schedule.dayOfWeek,
+      "startTime": schedule.startTime,
+      "endTime": schedule.endTime,
+      "patientLimit": schedule.patientLimit,
+    };
+    print(jsonEncode(parameters));
+    try {
+      Dio dio = new Dio();
+      dio.options.headers['content-Type'] = 'application/json';
+      dio.options.headers["Authorization"] = "Bearer ${token}";
+      var response = await dio.post(url + '/api/doctors/addSchedule',
+          data: jsonEncode(parameters));
+      print(response.data);
+      if (response.statusCode == 200) {
+        List<dynamic> schedulesMap = response.data["schedules"];
+        List<Schedule> schedules = [];
+        schedules = (schedulesMap)
+            .map((e) => Schedule.fromJson(e as Map<String, dynamic>))
+            .toList();
+        return Right(schedules);
+      } else {
+        return const Left("Some error occurred.");
+      }
+    } catch (e) {
+      print(e);
+      return const Left("Some error occurred.");
+      // throw e;
+    }
+  }
+
   static Future<Either<String, Doctor>> updateProfile(
-      Doctor patient, String email, String token) async {
+      Doctor tempDoctor, String email, String token) async {
     Map<String, dynamic> parameters = {
       "email": email,
     };
@@ -20,12 +83,12 @@ class NetworkService {
       dio.options.headers['content-Type'] = 'application/json';
       dio.options.headers["Authorization"] = "Bearer ${token}";
       var response = await dio.put(url + '/api/doctors/update',
-          queryParameters: parameters, data: jsonEncode(patient));
+          queryParameters: parameters, data: jsonEncode(tempDoctor));
       print(response.data);
       if (response.statusCode == 200) {
         // Map<String, dynamic> userMap = jsonDecode(response.body);
         Doctor doctor = Doctor.fromJson(response.data);
-        return Right(patient);
+        return Right(doctor);
       } else {
         return const Left("Some error occurred.");
       }

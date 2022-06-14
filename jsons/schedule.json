@@ -1,6 +1,7 @@
 {
-  "scheduleId": 1,
-  "dayOfWeek": 3,
-  "startTime": "2022-06-13T08:30:00",
-  "endTime": "2022-06-13T04:00:00"
+  "scheduleId?": 3,
+  "dayOfWeek": 2,
+  "startTime": "2022-06-14T02:30:00",
+  "endTime": "2022-06-14T04:00:00",
+  "patientLimit": 5
 }
