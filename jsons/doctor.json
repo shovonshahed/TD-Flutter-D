@@ -1,0 +1,13 @@
+{
+  "userName": "himel@gmail.com",
+  "name": "Himel",
+  "email": "himel@gmail.com",
+  "gender?": null,
+  "dateOfBirth?": "0001-01-01T00:00:00",
+  "address?": null,
+  "phoneNumber?": null,
+  "speciality?": null,
+  "college?": null,
+  "certificateUrl?": null,
+  "schedules": "$[]schedule"
+}
