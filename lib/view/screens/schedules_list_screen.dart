@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:teledoc_doctor/view/screens/add_schedule_screen.dart';
+import 'package:teledoc_doctor/view/screens/schedule_patients_list.dart';
 import '../../controllers/doctor_controller.dart';
 import '/models/doctor.dart';
 
@@ -58,6 +59,12 @@ class SchedulesListScreen extends StatelessWidget {
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return ListTile(
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SchedulePatientListScreen(
+                              schedule: schedules[index]),
+                        )),
                     leading: Icon(Icons.access_time),
                     title: Text(getDayName(schedules[index].dayOfWeek)),
                     subtitle: Text(

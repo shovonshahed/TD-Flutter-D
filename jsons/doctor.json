@@ -9,5 +9,6 @@
   "speciality?": null,
   "college?": null,
   "certificateUrl?": null,
+  "mapLocation":"$mapLocation",
   "schedules": "$[]schedule"
 }

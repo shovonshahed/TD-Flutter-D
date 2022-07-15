@@ -11,6 +11,31 @@ class NetworkService {
   // static const url = "http://10.0.2.2:5073";
   // static const url = "10.0.2.2:7116";
 
+  static Future<Either<String, Patient>> getUser(
+      String email, String token) async {
+    Map<String, dynamic> parameters = {"email": email};
+
+    try {
+      Dio dio = new Dio();
+      dio.options.headers['content-Type'] = 'application/json';
+      dio.options.headers["Authorization"] = "Bearer ${token}";
+      var response =
+          await dio.get(url + '/api/patients/p', queryParameters: parameters);
+
+      print(response.data);
+      if (response.statusCode == 200) {
+        Patient loginResponse = Patient.fromJson(response.data);
+        return Right(loginResponse);
+      } else {
+        return const Left("Some error occurred.");
+      }
+    } catch (e) {
+      print(e);
+      return const Left("Some error occurred.");
+      // throw e;
+    }
+  }
+
   static Future<Either<String, List<Schedule>>> getSchedules(
       String email, String token) async {
     Map<String, dynamic> parameters = {
@@ -78,6 +103,7 @@ class NetworkService {
     Map<String, dynamic> parameters = {
       "email": email,
     };
+    print(jsonEncode(tempDoctor));
     try {
       Dio dio = new Dio();
       dio.options.headers['content-Type'] = 'application/json';

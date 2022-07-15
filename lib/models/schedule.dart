@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import "patient.dart";
+import "patientMin.dart";
 part 'schedule.g.dart';
 
 @JsonSerializable()
@@ -11,8 +11,8 @@ class Schedule {
   late String startTime;
   late String endTime;
   late num patientLimit;
-
-  factory Schedule.fromJson(Map<String, dynamic> json) =>
-      _$ScheduleFromJson(json);
+  List<PatientMin>? patients;
+  
+  factory Schedule.fromJson(Map<String,dynamic> json) => _$ScheduleFromJson(json);
   Map<String, dynamic> toJson() => _$ScheduleToJson(this);
 }

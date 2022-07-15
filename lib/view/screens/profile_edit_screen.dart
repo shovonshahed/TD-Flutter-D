@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 // import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
@@ -10,6 +11,7 @@ import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:teledoc_doctor/controllers/doctor_controller.dart';
 import 'package:teledoc_doctor/models/index.dart';
+import 'package:teledoc_doctor/models/mapLocation.dart';
 import 'package:teledoc_doctor/services/loading_service.dart';
 import 'package:teledoc_doctor/view/screens/profile_screen.dart';
 import '../../constants/constants.dart';
@@ -33,6 +35,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   late TextEditingController specialityController;
   late TextEditingController collegeController;
   late TextEditingController addressController;
+  MapLocation? mapLocation;
   final _formKey = GlobalKey<FormState>();
   DateTime dateOfBirth = DateTime.now();
   String? gender;
@@ -73,6 +76,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     specialityController = TextEditingController(text: user.speciality ?? "");
     collegeController = TextEditingController(text: user.college ?? "");
     addressController = TextEditingController(text: user.address ?? "");
+    mapLocation = user.mapLocation;
     gender = user.gender ?? "";
     dateOfBirth = DateTime.tryParse(user.dateOfBirth!) ?? DateTime.now();
     if (dateOfBirth.isBefore(DateTime(1900))) {
@@ -105,6 +109,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       doctor.address = addressController.text;
       doctor.gender = gender;
       doctor.dateOfBirth = dateOfBirth.toIso8601String();
+      doctor.mapLocation = mapLocation;
       bool update = await controller.updateProfile(doctor);
       if (update) {
         CustomDialog.dismiss();
@@ -115,6 +120,52 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         CustomDialog.showToast("Something went wrong. Please try again later.");
       }
     }
+  }
+
+  Future<Position> getGeolocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      print("location service not enabled");
+      serviceEnabled = await Geolocator.openLocationSettings();
+      if (!serviceEnabled) {
+        print("location service settings denied");
+        // Location services are not enabled don't continue
+        // accessing the position and request users of the
+        // App to enable the location services.
+        return Future.error('Location services are disabled.');
+      }
+    }
+    print("location service enabled");
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      print("location service permission denied");
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        print("location service permission denied 2nd time");
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+    print("location service all permission granted");
+    return await Geolocator.getCurrentPosition();
   }
 
   @override
@@ -183,10 +234,36 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                       controller: collegeController,
                       icon: CupertinoIcons.book,
                     ),
-                    ProfileFieldWidget(
-                      title: "Address",
-                      controller: addressController,
-                      icon: CupertinoIcons.mail,
+                    Stack(
+                      children: [
+                        ProfileFieldWidget(
+                          title: "Address",
+                          controller: addressController,
+                          icon: CupertinoIcons.mail,
+                        ),
+                        Positioned(
+                          right: 0,
+                          top: 20,
+                          child: InkWell(
+                            onTap: () async {
+                              final position = await getGeolocation();
+                              mapLocation = MapLocation();
+                              mapLocation?.latitude =
+                                  position.latitude.toString();
+                              mapLocation?.longitude =
+                                  position.longitude.toString();
+                              setState(() {});
+                            },
+                            child: Text(
+                              "Get Device Location",
+                              style: kBodyTextStyle3.copyWith(
+                                  color: (mapLocation != null)
+                                      ? Colors.green
+                                      : kAccentColor),
+                            ),
+                          ),
+                        )
+                      ],
                     ),
 
                     Container(
@@ -427,7 +504,7 @@ class ProfileFieldWidget extends StatelessWidget {
                   style: TextStyle(fontSize: 14.sp, color: kColorLite),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "strings.fieldValidator";
+                      return "This field cannot be empty";
                     }
                     return null;
                   },

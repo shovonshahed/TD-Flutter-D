@@ -21,7 +21,9 @@ class DoctorController extends GetxController {
       CustomDialog.showToast("Schedules loading failed");
     }, (right) {
       schedules.value = right;
-      print("Day of week: ${schedules.elementAt(1).dayOfWeek}");
+      if (schedules.value.isNotEmpty) {
+        print("Day of week: ${schedules.value.first.dayOfWeek}");
+      }
     });
     notifyChildrens();
   }
@@ -34,7 +36,9 @@ class DoctorController extends GetxController {
       update = false;
     }, (right) {
       schedules.value = right;
-      print("Day of week: ${schedules.elementAt(1).dayOfWeek}");
+      if (schedules.value.isNotEmpty) {
+        print("Day of week: ${schedules.value.first.dayOfWeek}");
+      }
       notifyChildrens();
       update = !update;
     });
@@ -53,6 +57,16 @@ class DoctorController extends GetxController {
       update = !update;
     });
     return update;
+  }
+
+  Future getUser(String email) async {
+    final Either<String, Patient> response =
+        await NetworkService.getUser(email, _token);
+    response.fold((left) {
+      authenticated.value = false;
+    }, (right) {
+      return right;
+    });
   }
 
   Future login(String email, String password) async {

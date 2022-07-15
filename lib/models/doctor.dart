@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import "mapLocation.dart";
 import "schedule.dart";
 part 'doctor.g.dart';
 
@@ -16,6 +17,7 @@ class Doctor {
   String? speciality;
   String? college;
   String? certificateUrl;
+  MapLocation? mapLocation;
   late List<Schedule> schedules;
   
   factory Doctor.fromJson(Map<String,dynamic> json) => _$DoctorFromJson(json);

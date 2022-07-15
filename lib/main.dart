@@ -42,6 +42,7 @@ class MyApp extends StatelessWidget {
         navigatorObservers: [FlutterSmartDialog.observer],
         // here
         builder: FlutterSmartDialog.init(),
+        debugShowCheckedModeBanner: false,
       ),
     );
   }

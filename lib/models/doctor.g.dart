@@ -17,6 +17,9 @@ Doctor _$DoctorFromJson(Map<String, dynamic> json) => Doctor()
   ..speciality = json['speciality'] as String?
   ..college = json['college'] as String?
   ..certificateUrl = json['certificateUrl'] as String?
+  ..mapLocation = json['mapLocation'] == null
+      ? null
+      : MapLocation.fromJson(json['mapLocation'] as Map<String, dynamic>)
   ..schedules = (json['schedules'] as List<dynamic>)
       .map((e) => Schedule.fromJson(e as Map<String, dynamic>))
       .toList();
@@ -32,5 +35,6 @@ Map<String, dynamic> _$DoctorToJson(Doctor instance) => <String, dynamic>{
       'speciality': instance.speciality,
       'college': instance.college,
       'certificateUrl': instance.certificateUrl,
+      'mapLocation': instance.mapLocation,
       'schedules': instance.schedules,
     };

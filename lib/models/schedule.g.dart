@@ -11,7 +11,10 @@ Schedule _$ScheduleFromJson(Map<String, dynamic> json) => Schedule()
   ..dayOfWeek = json['dayOfWeek'] as num
   ..startTime = json['startTime'] as String
   ..endTime = json['endTime'] as String
-  ..patientLimit = json['patientLimit'] as num;
+  ..patientLimit = json['patientLimit'] as num
+  ..patients = (json['patients'] as List<dynamic>?)
+      ?.map((e) => PatientMin.fromJson(e as Map<String, dynamic>))
+      .toList();
 
 Map<String, dynamic> _$ScheduleToJson(Schedule instance) => <String, dynamic>{
       'scheduleId': instance.scheduleId,
@@ -19,4 +22,5 @@ Map<String, dynamic> _$ScheduleToJson(Schedule instance) => <String, dynamic>{
       'startTime': instance.startTime,
       'endTime': instance.endTime,
       'patientLimit': instance.patientLimit,
+      'patients': instance.patients,
     };
