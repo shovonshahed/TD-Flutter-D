@@ -7,6 +7,7 @@ import 'package:teledoc_doctor/services/network_service.dart';
 import 'package:teledoc_doctor/view/screens/patient_details_screen.dart';
 
 import '../../controllers/doctor_controller.dart';
+import '../../services/loading_service.dart';
 import '../widgets/appbar.dart';
 import '../widgets/drawer.dart';
 
@@ -40,15 +41,17 @@ class SchedulePatientListScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       return ListTile(
                         onTap: () async {
-                          Patient patient = await controller
-                              .getUser(schedule.patients![index].patientEmail);
-
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    PatientDetails(patient: patient),
-                              ));
+                          final Either<String, Patient> response =
+                          await controller.getUser(
+                              schedule.patients![index].patientEmail);
+                          response.fold(
+                                  (l) => CustomDialog.showToast(l),
+                                  (r) => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        PatientDetails(patient: r),
+                                  )));
                         },
                         leading: Icon(Icons.access_time),
                         title: Text(schedule.patients![index].patientEmail),

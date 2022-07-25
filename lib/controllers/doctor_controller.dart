@@ -59,14 +59,10 @@ class DoctorController extends GetxController {
     return update;
   }
 
-  Future getUser(String email) async {
+  Future<Either<String, Patient>> getUser(String email) async {
     final Either<String, Patient> response =
-        await NetworkService.getUser(email, _token);
-    response.fold((left) {
-      authenticated.value = false;
-    }, (right) {
-      return right;
-    });
+    await NetworkService.getUser(email, _token);
+    return response;
   }
 
   Future login(String email, String password) async {
